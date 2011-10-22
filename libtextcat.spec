@@ -20,15 +20,15 @@ Source6:	http://hg.services.openoffice.org/hg/DEV300/raw-file/tip/libtextcat/dat
 # Source6-md5:	72bd27a60a4db478f3162eb4da387252
 Source7:	http://hg.services.openoffice.org/hg/DEV300/raw-file/tip/libtextcat/data/new_fingerprints/lm/zulu.lm
 # Source7-md5:	c8ce1e0b3e965aa2bd9e96ebc34c60fc
-URL:		http://software.wise-guys.nl/libtextcat/
-Buildroot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-BuildRequires:	libtool
 #wrap headers in extern "C" for use with C++ and split common.h into multilib headers
 Patch0:		%{name}-2.2-exportapi.patch
-#make libtextcat utf8 aware for use with OOo
+#make %{name} utf8 aware for use with OOo
 #See http://www.mail-archive.com/dev@lingucomponent.openoffice.org/msg00912.html
-#and http://hg.services.openoffice.org/hg/DEV300/raw-file/tip/libtextcat/libtextcat-2.2.patch
+#and http://hg.services.openoffice.org/hg/DEV300/raw-file/tip/%{name}/%{name}-2.2.patch
 Patch1:		%{name}-2.2-OOo.patch
+URL:		http://software.wise-guys.nl/libtextcat/
+BuildRequires:	libtool
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Libtextcat is a library with functions that implement the
@@ -40,7 +40,7 @@ accuracy.
 %package devel
 Summary:	Support files necessary to compile applications with libtextcat
 Group:		Development/Libraries
-Requires:	libtextcat = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description devel
 Libraries, headers, and support files necessary to compile
@@ -48,111 +48,115 @@ applications using libtextcat.
 
 %prep
 %setup -q
-%patch0 -p1 -b .exportapi.patch
-%patch1 -p1 -b .ooo.patch
+%patch0 -p1
+%patch1 -p1
 
 %build
 autoreconf -f -i
 %configure \
 	--disable-static \
 
-%{__make} %{?_smp_mflags}
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} DESTDIR=$RPM_BUILD_ROOT install
-rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
-install -d $RPM_BUILD_ROOT/%{_datadir}/libtextcat
-cp -p %{SOURCE1} $RPM_BUILD_ROOT/%{_datadir}/libtextcat
-cd langclass/LM
-cp -p amharic-utf.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/amharic_utf.lm
-cp -p yiddish-utf.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/yiddish_utf.lm
-cp -p afrikaans.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/afrikaans.lm
-cp -p basque.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/basque.lm
-cp -p bosnian.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/bosnian.lm
-cp -p croatian-ascii.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/croatian.lm
-cp -p dutch.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/dutch.lm
-cp -p english.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/english.lm
-cp -p icelandic.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/icelandic.lm
-cp -p indonesian.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/indonesian.lm
-cp -p latin.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/latin.lm
-cp -p malay.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/malay.lm
-cp -p manx.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/manx_gaelic.lm
-cp -p marathi.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/marathi.lm
-cp -p nepali.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/nepali.lm
-cp -p romanian.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/romanian.lm
-cp -p sanskrit.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/sanskrit.lm
-cp -p scots.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/scots.lm
-cp -p serbian-ascii.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/serbian_ascii.lm
-cp -p slovak-ascii.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/slovak_ascii.lm
-cp -p swahili.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/swahili.lm
-cp -p tagalog.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/tagalog.lm
-cp -p welsh.lm $RPM_BUILD_ROOT/%{_datadir}/libtextcat/welsh.lm
-iconv -f WINDOWS-1256 -t UTF-8 arabic-windows1256.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/arabic.lm
-iconv -f ISO-8859-1 -t UTF-8 albanian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/albanian.lm
-iconv -f WINDOWS-1251 -t UTF-8 belarus-windows1251.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/belarus.lm
-iconv -f ISO-8859-1 -t UTF-8 breton.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/breton.lm
-iconv -f ISO-8859-1 -t UTF-8 catalan.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/catalan.lm
-iconv -f ISO-8859-2 -t UTF-8 czech-iso8859_2.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/czech.lm
-iconv -f ISO-8859-1 -t UTF-8 danish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/danish.lm
-iconv -f ISO-8859-3 -t UTF-8 esperanto.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/esperanto.lm
-iconv -f ISO-8859-15 -t UTF-8 estonian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/estonian.lm
-iconv -f ISO-8859-1 -t UTF-8 finnish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/finnish.lm
-iconv -f ISO-8859-1 -t UTF-8 french.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/french.lm
-iconv -f ISO-8859-1 -t UTF-8 frisian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/frisian.lm
-iconv -f ISO-8859-1 -t UTF-8 georgian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/georgian.lm
-iconv -f ISO-8859-1 -t UTF-8 german.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/german.lm
-iconv -f ISO-8859-7 -t UTF-8 greek-iso8859-7.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/greek.lm
-iconv -f ISO-8859-8 -t UTF-8 hebrew-iso8859_8.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/hebrew.lm
-iconv -f ISO-8859-2 -t UTF-8 hungarian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/hungarian.lm
-iconv -f ISO-8859-1 -t UTF-8 irish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/irish_gaelic.lm
-iconv -f ISO-8859-1 -t UTF-8 italian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/italian.lm
-iconv -f ISO-8859-13 -t UTF-8 latvian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/latvian.lm
-iconv -f ISO-8859-13 -t UTF-8 lithuanian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/lithuanian.lm
-iconv -f ISO-8859-1 -t UTF-8 malay.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/malay.lm
-iconv -f ISO-8859-1 -t UTF-8 middle_frisian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/middle_frisian.lm
-iconv -f ISO-8859-1 -t UTF-8 mingo.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/mingo.lm
-iconv -f ISO-8859-1 -t UTF-8 norwegian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/norwegian.lm
-iconv -f ISO-8859-2 -t UTF-8 polish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/polish.lm
-iconv -f ISO-8859-1 -t UTF-8 portuguese.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/portuguese.lm
-iconv -f ISO-8859-1 -t UTF-8 quechua.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/quechua.lm
-iconv -f ISO-8859-1 -t UTF-8 rumantsch.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/romansh.lm
-iconv -f ISO-8859-5 -t UTF-8 russian-iso8859_5.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/russian.lm
-iconv -f ISO-8859-1 -t UTF-8 scots_gaelic.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/scots_gaelic.lm
-iconv -f ISO-8859-2 -t UTF-8 slovenian-iso8859_2.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/slovenian.lm
-iconv -f ISO-8859-1 -t UTF-8 spanish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/spanish.lm
-iconv -f ISO-8859-1 -t UTF-8 swedish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/swedish.lm
-iconv -f ISO-8859-9 -t UTF-8 turkish.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/turkish.lm
-iconv -f KOI8-R -t UTF-8 ukrainian-koi8_r.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/ukrainian.lm
-#these look wrong to me, but that's what upstream OOo has done, raise this upstream
-iconv -f ISO-8859-1 -t UTF-8 hindi.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/hindi.lm
-iconv -f ISO-8859-1 -t UTF-8 persian.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/persian.lm
-iconv -f ISO-8859-1 -t UTF-8 korean.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/korean.lm
-iconv -f ISO-8859-1 -t UTF-8 tamil.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/tamil.lm
-iconv -f ISO-8859-1 -t UTF-8 thai.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/thai.lm
-iconv -f ISO-8859-1 -t UTF-8 vietnamese.lm > $RPM_BUILD_ROOT/%{_datadir}/libtextcat/vietnamese.lm
-#and I have no idea how they fixed the encoding of these ones
-cp -p %{SOURCE2} $RPM_BUILD_ROOT/%{_datadir}/libtextcat/chinese_simplified.lm
-cp -p %{SOURCE3} $RPM_BUILD_ROOT/%{_datadir}/libtextcat/chinese_traditional.lm
-cp -p %{SOURCE4} $RPM_BUILD_ROOT/%{_datadir}/libtextcat/japanese.lm
-cp -p %{SOURCE5} $RPM_BUILD_ROOT/%{_datadir}/libtextcat/luxembourgish.lm
-cp -p %{SOURCE6} $RPM_BUILD_ROOT/%{_datadir}/libtextcat/mongolian_cyrillic.lm
-cp -p %{SOURCE7} $RPM_BUILD_ROOT/%{_datadir}/libtextcat/zulu.lm
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
+
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}
+cd langclass/LM
+cp -p amharic-utf.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/amharic_utf.lm
+cp -p yiddish-utf.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/yiddish_utf.lm
+cp -p afrikaans.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/afrikaans.lm
+cp -p basque.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/basque.lm
+cp -p bosnian.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/bosnian.lm
+cp -p croatian-ascii.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/croatian.lm
+cp -p dutch.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/dutch.lm
+cp -p english.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/english.lm
+cp -p icelandic.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/icelandic.lm
+cp -p indonesian.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/indonesian.lm
+cp -p latin.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/latin.lm
+cp -p malay.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/malay.lm
+cp -p manx.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/manx_gaelic.lm
+cp -p marathi.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/marathi.lm
+cp -p nepali.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/nepali.lm
+cp -p romanian.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/romanian.lm
+cp -p sanskrit.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/sanskrit.lm
+cp -p scots.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/scots.lm
+cp -p serbian-ascii.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/serbian_ascii.lm
+cp -p slovak-ascii.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/slovak_ascii.lm
+cp -p swahili.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/swahili.lm
+cp -p tagalog.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/tagalog.lm
+cp -p welsh.lm $RPM_BUILD_ROOT%{_datadir}/%{name}/welsh.lm
+iconv -f WINDOWS-1256 -t UTF-8 arabic-windows1256.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/arabic.lm
+iconv -f ISO-8859-1 -t UTF-8 albanian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/albanian.lm
+iconv -f WINDOWS-1251 -t UTF-8 belarus-windows1251.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/belarus.lm
+iconv -f ISO-8859-1 -t UTF-8 breton.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/breton.lm
+iconv -f ISO-8859-1 -t UTF-8 catalan.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/catalan.lm
+iconv -f ISO-8859-2 -t UTF-8 czech-iso8859_2.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/czech.lm
+iconv -f ISO-8859-1 -t UTF-8 danish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/danish.lm
+iconv -f ISO-8859-3 -t UTF-8 esperanto.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/esperanto.lm
+iconv -f ISO-8859-15 -t UTF-8 estonian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/estonian.lm
+iconv -f ISO-8859-1 -t UTF-8 finnish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/finnish.lm
+iconv -f ISO-8859-1 -t UTF-8 french.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/french.lm
+iconv -f ISO-8859-1 -t UTF-8 frisian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/frisian.lm
+iconv -f ISO-8859-1 -t UTF-8 georgian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/georgian.lm
+iconv -f ISO-8859-1 -t UTF-8 german.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/german.lm
+iconv -f ISO-8859-7 -t UTF-8 greek-iso8859-7.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/greek.lm
+iconv -f ISO-8859-8 -t UTF-8 hebrew-iso8859_8.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/hebrew.lm
+iconv -f ISO-8859-2 -t UTF-8 hungarian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/hungarian.lm
+iconv -f ISO-8859-1 -t UTF-8 irish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/irish_gaelic.lm
+iconv -f ISO-8859-1 -t UTF-8 italian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/italian.lm
+iconv -f ISO-8859-13 -t UTF-8 latvian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/latvian.lm
+iconv -f ISO-8859-13 -t UTF-8 lithuanian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/lithuanian.lm
+iconv -f ISO-8859-1 -t UTF-8 malay.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/malay.lm
+iconv -f ISO-8859-1 -t UTF-8 middle_frisian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/middle_frisian.lm
+iconv -f ISO-8859-1 -t UTF-8 mingo.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/mingo.lm
+iconv -f ISO-8859-1 -t UTF-8 norwegian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/norwegian.lm
+iconv -f ISO-8859-2 -t UTF-8 polish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/polish.lm
+iconv -f ISO-8859-1 -t UTF-8 portuguese.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/portuguese.lm
+iconv -f ISO-8859-1 -t UTF-8 quechua.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/quechua.lm
+iconv -f ISO-8859-1 -t UTF-8 rumantsch.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/romansh.lm
+iconv -f ISO-8859-5 -t UTF-8 russian-iso8859_5.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/russian.lm
+iconv -f ISO-8859-1 -t UTF-8 scots_gaelic.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/scots_gaelic.lm
+iconv -f ISO-8859-2 -t UTF-8 slovenian-iso8859_2.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/slovenian.lm
+iconv -f ISO-8859-1 -t UTF-8 spanish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/spanish.lm
+iconv -f ISO-8859-1 -t UTF-8 swedish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/swedish.lm
+iconv -f ISO-8859-9 -t UTF-8 turkish.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/turkish.lm
+iconv -f KOI8-R -t UTF-8 ukrainian-koi8_r.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/ukrainian.lm
+# these look wrong to me, but that's what upstream OOo has done, raise this upstream
+iconv -f ISO-8859-1 -t UTF-8 hindi.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/hindi.lm
+iconv -f ISO-8859-1 -t UTF-8 persian.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/persian.lm
+iconv -f ISO-8859-1 -t UTF-8 korean.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/korean.lm
+iconv -f ISO-8859-1 -t UTF-8 tamil.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/tamil.lm
+iconv -f ISO-8859-1 -t UTF-8 thai.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/thai.lm
+iconv -f ISO-8859-1 -t UTF-8 vietnamese.lm > $RPM_BUILD_ROOT%{_datadir}/%{name}/vietnamese.lm
+# and I have no idea how they fixed the encoding of these ones
+cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/%{name}/chinese_simplified.lm
+cp -p %{SOURCE3} $RPM_BUILD_ROOT%{_datadir}/%{name}/chinese_traditional.lm
+cp -p %{SOURCE4} $RPM_BUILD_ROOT%{_datadir}/%{name}/japanese.lm
+cp -p %{SOURCE5} $RPM_BUILD_ROOT%{_datadir}/%{name}/luxembourgish.lm
+cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_datadir}/%{name}/mongolian_cyrillic.lm
+cp -p %{SOURCE7} $RPM_BUILD_ROOT%{_datadir}/%{name}/zulu.lm
+
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
+
+%clean
+rm -r $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
 %doc ChangeLog README LICENSE TODO
-%attr(755,root,root) %{_libdir}/lib*.so.*
-%{_datadir}/libtextcat
+%attr(755,root,root) %{_libdir}/libtextcat.so.*.*.*
+%ghost %{_libdir}/libtextcat.so.0
+%{_datadir}/%{name}
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/createfp
-%attr(755,root,root) %{_libdir}/*.so
+%{_libdir}/libtextcat.so
 %{_includedir}/%{name}
-
-%clean
-rm -r $RPM_BUILD_ROOT
