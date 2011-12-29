@@ -146,7 +146,7 @@ cp -p %{SOURCE7} $RPM_BUILD_ROOT%{_datadir}/%{name}/zulu.lm
 %postun	-p /sbin/ldconfig
 
 %clean
-rm -r $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
